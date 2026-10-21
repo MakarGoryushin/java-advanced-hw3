@@ -1,5 +1,22 @@
 package benchmarks;
 
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Param;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.infra.Blackhole;
+import ru.centraluniversity.workload.GcWorkload;
+import ru.centraluniversity.workload.Workloads;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Заготовка JMH-бенчмарка для сравнения сборщиков мусора G1, ZGC и Shenandoah.
  * <p>
@@ -42,6 +59,37 @@ package benchmarks;
  * </pre>
  * Результаты - JSON в {@code build/results/jmh/results.json}; по ним строятся графики для отчёта.
  */
+@State(Scope.Benchmark)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class GcComparisonBenchmark {
-    // TODO: реализовать бенчмарк (см. подсказки выше).
+
+    @Param({
+            "short-lived-garbage",
+            "long-lived-objects",
+            "mixed",
+            "largeObjects",
+            "referenceHeavy"
+    })
+    public String workloadName;
+
+    private final Map<String, GcWorkload> workloads = new HashMap<>();
+    private GcWorkload workload;
+
+    @Setup(Level.Trial)
+    public void setup() {
+        for (GcWorkload candidate : Workloads.all()) {
+            workloads.put(candidate.name(), candidate);
+        }
+        workload = workloads.get(workloadName);
+        if (workload == null) {
+            throw new IllegalArgumentException("Unknown workload: " + workloadName);
+        }
+    }
+
+    @Benchmark
+    public void runWorkload(Blackhole blackhole) {
+        workload.run();
+        blackhole.consume(workload);
+    }
 }

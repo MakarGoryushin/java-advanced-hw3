@@ -23,10 +23,10 @@ public final class LongLivedObjectsWorkload implements GcWorkload {
     public void run() {
         for (int i = 0; i < 100; i++) {
             if (live.size() > LIMIT) {
-                live.removeFirst(); // один долгоживущий "умер"
+                live.removeFirst();
             }
             live.addLast(new byte[CHUNK]);
-            byte[] tmp = new byte[48]; // и немного свежего мусора
+            byte[] tmp = new byte[48];
             tmp[0] = (byte) i;
             sink = tmp;
         }

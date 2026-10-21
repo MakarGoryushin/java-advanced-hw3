@@ -16,6 +16,10 @@ java {
     }
 }
 
+tasks.withType<org.gradle.api.tasks.compile.JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+}
+
 dependencies {
     jmhImplementation("org.openjdk.jmh:jmh-core:1.37")
     jmhAnnotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:1.37")
@@ -30,6 +34,7 @@ jmh {
     warmupIterations.set(3)     // 3 прогревочные итерации, их результат не учитывается (нужен разогрев JIT)
     iterations.set(5)           // 5 замеряемых итераций, из них считаются метрики
     timeUnit.set("ms")          // единица измерения в отчёте - миллисекунды
+    profilers.set(listOf("gc"))
 
     // Прогон под конкретный сборщик мусора - передачей JVM-аргументов форкнутой JVM:
     //   ./gradlew jmh -PjmhJvmArgs="-XX:+UseG1GC -Xms2g -Xmx2g -Xlog:gc*:file=logs/g1.log"

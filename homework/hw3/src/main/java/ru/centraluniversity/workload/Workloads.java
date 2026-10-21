@@ -58,9 +58,9 @@ public final class Workloads {
         List<GcWorkload> result = new ArrayList<>();
         result.add(shortLivedGarbage());
         result.add(longLivedObjects());
-        // TODO: result.add(mixed());
-        // TODO: result.add(largeObjects());
-        // TODO: result.add(referenceHeavy());
+        result.add(mixed());
+        result.add(largeObjects());
+        result.add(referenceHeavy());
         return result;
     }
 }

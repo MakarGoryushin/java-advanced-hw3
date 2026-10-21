@@ -10,7 +10,8 @@ package ru.centraluniversity.workload;
  */
 public final class LargeObjectsWorkload implements GcWorkload {
 
-    // TODO: константа размера массива
+    private static final int ARRAY_SIZE = 2 * 1024 * 1024;
+    private static final int ARRAYS_PER_ITERATION = 3;
 
     private Object sink;
 
@@ -21,6 +22,10 @@ public final class LargeObjectsWorkload implements GcWorkload {
 
     @Override
     public void run() {
-        // TODO: одна итерация: выделить большой массив, результат в sink.
+        for (int i = 0; i < ARRAYS_PER_ITERATION; i++) {
+            byte[] array = new byte[ARRAY_SIZE];
+            array[0] = (byte) i;
+            sink = array;
+        }
     }
 }

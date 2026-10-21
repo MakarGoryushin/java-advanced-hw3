@@ -1,5 +1,9 @@
 package ru.centraluniversity.workload;
 
+import java.lang.ref.SoftReference;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  * Кэш на слабых/мягких ссылках: периодически создаются ключи, значения
  * удерживаются WeakReference/SoftReference, сборщик вычищает записи, чьи ключи
@@ -11,8 +15,10 @@ package ru.centraluniversity.workload;
  */
 public final class ReferenceHeavyWorkload implements GcWorkload {
 
-    // TODO: поля и константы кэша
+    private static final int ENTRIES_PER_ITERATION = 10_000;
+    private static final int VALUE_SIZE = 256;
 
+    private final Map<Object, SoftReference<byte[]>> cache = new WeakHashMap<>();
     private Object sink;
 
     @Override
@@ -22,6 +28,13 @@ public final class ReferenceHeavyWorkload implements GcWorkload {
 
     @Override
     public void run() {
-        // TODO: одна итерация: ключи кэша создаются и сразу забываются.
+        for (int i = 0; i < ENTRIES_PER_ITERATION; i++) {
+            Object key = new Object();
+            byte[] value = new byte[VALUE_SIZE];
+            value[0] = (byte) i;
+            cache.put(key, new SoftReference<>(value));
+        }
+
+        sink = cache;
     }
 }

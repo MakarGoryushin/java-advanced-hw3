@@ -9,7 +9,7 @@ package ru.centraluniversity.workload;
  */
 public final class ShortLivedGarbageWorkload implements GcWorkload {
 
-    private static final int COUNT = 200_000; // объектов-однодневок за итерацию
+    private static final int COUNT = 200_000;
 
     private Object sink;
 
